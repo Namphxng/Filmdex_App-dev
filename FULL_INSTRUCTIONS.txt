@@ -1,0 +1,372 @@
+================================================================
+                FILMDEX — FULL SETUP & INSTRUCTIONS
+          Movie & Series Watchlist + Personal Journal
+================================================================
+
+Stack:
+   API:       Flask (Python)          filmdex/api/
+   Auth:      Firebase Authentication (email/password)
+   Database:  MongoDB Community Server (local install)
+   Tunnel:    ngrok (public URL for the API) — optional, opt-in
+   Frontend:  React + Vite (web)      filmdex/web/
+              React Native + Expo (mobile) filmdex/mobile/
+
+================================================================
+PROJECT STRUCTURE
+================================================================
+
+filmdex/
+  api/        Flask + PyMongo + firebase-admin
+  web/        React + Vite
+  mobile/     React Native + Expo
+
+
+================================================================
+ARCHITECTURE
+================================================================
+
+  Browser / Phone
+      │
+      │  Sign up / log in via Firebase SDK (email + password)
+      ▼
+  Firebase Auth ──────────► ID token returned to client
+      │
+      │  Every API call: Authorization: Bearer <ID token>
+      ▼
+  Flask API (port 5000)
+      ├─ firebase-admin: verifies token, extracts uid
+      ├─ pymongo: reads/writes MongoDB
+      └─ Returns JSON: { "success": true/false, "data": ..., "message": "..." }
+
+  MongoDB (localhost:27017, db: filmdex)
+      ├─ users       — { firebaseUid, username, email, bio, favoriteGenres }
+      ├─ watchlists  — { userId, tmdbId, tmdbType, status, ... }
+      └─ reviews     — { userId, tmdbId, rating, reviewText, ... }
+
+
+================================================================
+0. PREREQUISITES (install these first)
+================================================================
+
+1. Node.js v18 or v20 LTS  (NOT v24 — Expo has Windows issues on v24)
+      https://nodejs.org/en/download/
+
+2. Python 3.10, 3.11, or 3.12
+      https://www.python.org/downloads/
+      During install: tick "Add python.exe to PATH"
+
+3. MongoDB Community Server (runs locally as a Windows service)
+      https://www.mongodb.com/try/download/community
+      Default install settings are fine. Listens on localhost:27017.
+      Verify it's running:  Get-Service MongoDB
+
+4. A Firebase project (for authentication)
+      a) Go to https://console.firebase.google.com/
+      b) Click "Add project" → give it a name like "filmdex" → continue
+      c) Authentication → Get started → Sign-in method →
+         Email/Password → Enable → Save
+      d) Project Settings (gear icon, top-left) →
+         "Your apps" → click </> (web) → Register app → copy the
+         firebaseConfig object (apiKey, authDomain, projectId, etc.)
+      e) Project Settings → Service accounts → "Generate new
+         private key" → save the downloaded JSON as
+         filmdex/api/firebase-service-account.json
+         (NEVER commit this file — it is an admin credential.)
+
+5. Expo Go app on your phone (free) — for mobile testing
+
+Verify your toolchain:
+      node --version      (expect 18.x or 20.x)
+      python --version    (expect 3.10+)
+      mongod --version
+
+
+================================================================
+1. ONE-TIME SETUP
+================================================================
+
+After unzipping, open PowerShell and run:
+
+  ── Flask API ──────────────────────────────────────────────────
+      cd "C:\path\to\filmdex\api"
+      python -m venv .venv
+      .\.venv\Scripts\Activate.ps1
+      pip install -r requirements.txt
+      copy .env.example .env
+
+      Place firebase-service-account.json in this folder
+      (downloaded from Firebase Console — see Prerequisite 4e)
+
+  ── Web ────────────────────────────────────────────────────────
+      cd "C:\path\to\filmdex\web"
+      npm install
+
+  ── Mobile ─────────────────────────────────────────────────────
+      cd "C:\path\to\filmdex\mobile"
+      npm install
+
+
+================================================================
+2. ENV FILES — what to put where
+================================================================
+
+filmdex/api/.env
+    FLASK_ENV=development
+    PORT=5000
+    MONGODB_URI=mongodb://localhost:27017
+    MONGODB_DB=filmdex
+    FIREBASE_SERVICE_ACCOUNT=firebase-service-account.json
+    CLIENT_URL=*
+    USE_NGROK=true                       # set false to disable tunnel
+    NGROK_AUTH_TOKEN=<your ngrok token>  # get from dashboard.ngrok.com
+
+filmdex/api/firebase-service-account.json
+    (downloaded from Firebase Console → Service accounts)
+
+filmdex/web/.env
+    VITE_API_URL=http://localhost:5000/api
+    VITE_FIREBASE_API_KEY=...
+    VITE_FIREBASE_AUTH_DOMAIN=...
+    VITE_FIREBASE_PROJECT_ID=...
+    VITE_FIREBASE_STORAGE_BUCKET=...
+    VITE_FIREBASE_MESSAGING_SENDER_ID=...
+    VITE_FIREBASE_APP_ID=...
+
+filmdex/mobile/.env
+    EXPO_PUBLIC_API_URL=http://localhost:5000/api
+    EXPO_PUBLIC_FIREBASE_API_KEY=...
+    EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+    EXPO_PUBLIC_FIREBASE_PROJECT_ID=...
+    EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=...
+    EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
+    EXPO_PUBLIC_FIREBASE_APP_ID=...
+
+Fill in all FIREBASE_* values from:
+   Firebase Console → Project Settings → Your apps → Web app → firebaseConfig
+
+
+================================================================
+3. RUNNING THE FLASK API  (start this FIRST)
+================================================================
+
+The API powers BOTH the web and mobile apps. Always run it first.
+
+    cd "C:\path\to\filmdex\api"
+    .\.venv\Scripts\Activate.ps1
+    python app.py
+
+You should see:
+    MongoDB connected: mongodb://localhost:27017 / db=filmdex
+    Firebase Admin initialized.
+    ================================================================
+      PUBLIC URL:  https://abcd-1234.ngrok-free.app
+      API base:    https://abcd-1234.ngrok-free.app/api
+      Health:      https://abcd-1234.ngrok-free.app/health
+    ================================================================
+    Filmdex Flask API running on port 5000
+
+If ngrok is enabled, copy the printed public URL into:
+    web/.env       VITE_API_URL=https://<ngrok-url>/api
+    mobile/.env    EXPO_PUBLIC_API_URL=https://<ngrok-url>/api
+then restart the web (npm run dev) and mobile (npx expo start -c).
+
+The ngrok URL changes every restart on the free plan.
+Set USE_NGROK=false to skip the tunnel for local-only testing.
+
+NOTES
+- Data is stored in your LOCAL MongoDB (db: filmdex).
+  Inspect with MongoDB Compass: mongodb://localhost:27017
+- Movies are mock data (37 hardcoded titles in services/movies_data.py).
+- Stop the API: Ctrl+C in the terminal.
+
+If port 5000 is in use:
+    Get-NetTCPConnection -LocalPort 5000 |
+        ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+
+
+================================================================
+4. RUNNING THE WEB APP (React + Vite)
+================================================================
+
+In a SECOND PowerShell window (keep the API running):
+
+    cd "C:\path\to\filmdex\web"
+    npm run dev
+
+Should see:  Local: http://localhost:3000/
+
+Open http://localhost:3000 in your browser.
+
+WHAT YOU CAN DO
+- Register a new account (creates a Firebase user + a Mongo profile)
+- Log in
+- Home: browse trending movies & series
+- Search: by title, overview, or genre name
+- Click a poster → Movie Detail: overview, cast, similar, reviews
+- Add to watchlist (Plan to Watch / Watching / Watched)
+- Write reviews (1–10 stars + text)
+- Journal: all reviews you've written
+- Profile: your stats
+
+
+================================================================
+5. RUNNING THE MOBILE APP (React Native + Expo)
+================================================================
+
+In a THIRD PowerShell window (keep the API running):
+
+    cd "C:\path\to\filmdex\mobile"
+    npx expo start
+
+A QR code appears. On your phone (Expo Go installed):
+- Android: scan in Expo Go directly
+- iOS: scan with Camera app, then tap the link
+
+Phone and laptop must be on the SAME WiFi.
+
+If the mobile app shows "network error", your phone can't reach
+"localhost" on your laptop. Edit mobile/.env:
+    EXPO_PUBLIC_API_URL=http://192.168.X.X:5000/api
+Find your laptop's LAN IP with  ipconfig  (look for IPv4 Address
+under your WiFi adapter), then restart Expo with:
+    npx expo start -c
+
+
+================================================================
+6. FULL DEMO WORKFLOW
+================================================================
+
+1. Terminal 1: start the API
+       cd api
+       .\.venv\Scripts\Activate.ps1
+       python app.py
+
+2. Terminal 2: start the web
+       cd web
+       npm run dev
+
+3. Open http://localhost:3000
+
+4. Click "Create an account":
+       Username: demo
+       Email:    demo@filmdex.com
+       Password: demo123
+
+   → Firebase creates the auth user
+   → Flask creates the Mongo profile (in your local MongoDB)
+
+5. Land on Home — trending titles appear.
+
+6. Search "batman" → results appear → click "The Dark Knight".
+
+7. On the detail page:
+   - Click "+ Plan to Watch"
+   - Write a review: 8 stars, "Incredible movie", Post
+
+8. Click "Watchlist" — The Dark Knight is under "Plan to Watch".
+
+9. Click "Journal" — your review.
+
+10. Click "Profile" — your stats.
+
+
+================================================================
+7. API ENDPOINTS (REST)
+================================================================
+
+All protected routes require:  Authorization: Bearer <Firebase ID token>
+Response shape:  { "success": true/false, "data": ..., "message": "..." }
+
+AUTH
+  POST   /api/auth/register     { username, favoriteGenres? }    (auth)
+                                  creates the Mongo profile for
+                                  the signed-in Firebase user
+  GET    /api/auth/profile                                       (auth)
+  PUT    /api/auth/profile      { bio, avatar, favoriteGenres }  (auth)
+
+MOVIES  (mock data — no TMDB key needed)
+  GET    /api/movies/trending
+  GET    /api/movies/search?q=batman
+  GET    /api/movies/:id?type=movie|tv
+  GET    /api/movies/genres?type=movie|tv
+  GET    /api/movies/genre/:genreId?type=movie|tv
+  GET    /api/movies/recommendations                             (auth)
+
+WATCHLIST  (all auth)
+  GET    /api/watchlist?status=planned|watching|watched
+  POST   /api/watchlist       { tmdbId, tmdbType, title, poster, status }
+  PUT    /api/watchlist/:id   { status }
+  DELETE /api/watchlist/:id
+
+REVIEWS
+  GET    /api/reviews/:movieId?type=movie|tv
+  GET    /api/reviews/my                                         (auth)
+  POST   /api/reviews         { tmdbId, tmdbType, rating, reviewText }  (auth)
+  PUT    /api/reviews/:id     { rating, reviewText }             (auth)
+  DELETE /api/reviews/:id                                        (auth)
+
+
+
+================================================================
+8. TROUBLESHOOTING
+================================================================
+
+"MongoDB connection failed" when starting Flask
+  → MongoDB isn't running. Open Services → start "MongoDB Server".
+    Or:  Start-Service MongoDB
+
+"Firebase Admin initialized" doesn't appear / 401 on every call
+  → filmdex/api/firebase-service-account.json is missing or invalid.
+    Re-download from Firebase Console → Service accounts.
+
+Web: "auth/api-key-not-valid"
+  → Firebase config in web/.env is wrong or empty. Copy values
+    from Firebase Console → Project Settings → Your apps → Web app.
+
+Web: "Firebase: Error (auth/email-already-in-use)"
+  → That email is already registered in Firebase. Sign in instead,
+    or delete the user in Firebase Console → Authentication → Users.
+
+Mobile: "Network request failed"
+  → Phone can't reach your laptop. Set EXPO_PUBLIC_API_URL to your
+    laptop's LAN IP (run ipconfig), then restart Expo.
+
+Mobile: "Component auth has not been registered yet"
+  → Stale Metro cache. Stop Expo, then:  npx expo start -c
+
+"ModuleNotFoundError: No module named 'flask'"
+  → Activate the venv first:  .\.venv\Scripts\Activate.ps1
+
+Python venv activation blocked on PowerShell
+  → Run once as admin:
+       Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+ngrok: "authentication failed" / "ERR_NGROK_4018"
+  → NGROK_AUTH_TOKEN in api/.env is missing or wrong. Get a fresh
+    token from https://dashboard.ngrok.com/get-started/your-authtoken
+
+ngrok: tunnel URL changes every restart
+  → Expected on the free plan. Keep the Flask process running,
+    or set USE_NGROK=false for local-only testing.
+
+
+================================================================
+9. SECURITY NOTES
+================================================================
+
+- Passwords are NEVER stored by Flask. Firebase handles
+  password hashing, reset emails, and MFA.
+- Flask verifies the ID token on every request via firebase-admin.
+  Tokens are short-lived (~1 hour) and auto-refreshed by the
+  Firebase client SDK.
+- firebase-service-account.json is a SECRET. Never commit it.
+  (It is already excluded in api/.gitignore.)
+- For production, set:
+     FLASK_ENV=production
+     CLIENT_URL=https://your-frontend-domain.com
+  and run Flask behind gunicorn/waitress.
+
+
+================================================================
+                  HAPPY CODING — GOOD LUCK!
+================================================================

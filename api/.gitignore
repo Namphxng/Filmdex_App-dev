@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+firebase-service-account.json
+*.log

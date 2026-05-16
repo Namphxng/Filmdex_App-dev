@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+api/.venv/
+api/.env
+api/firebase-service-account.json
+
+# Node
+node_modules/
+web/.env
+mobile/.env
+
+# Expo
+mobile/.expo/
+
+# Build output
+web/dist/
+
+# macOS
+.DS_Store
