@@ -8,6 +8,7 @@ export default function MovieDetail() {
   const { type, id } = useParams();
   const [movie, setMovie] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [avgRating, setAvgRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(5);
   const [text, setText] = useState('');
@@ -23,6 +24,7 @@ export default function MovieDetail() {
       ]);
       setMovie(m.data.data);
       setReviews(r.data.data || []);
+      setAvgRating(r.data.averageRating || 0);
     } finally {
       setLoading(false);
     }
@@ -88,6 +90,10 @@ export default function MovieDetail() {
             <span>{year}</span>
             {genres && <span>{genres}</span>}
           </div>
+          <div className="meta-row">
+            {avgRating > 0 && <span>User Avg {avgRating.toFixed(1)}/10</span>}
+            {movie.runtime > 0 && <span>{movie.runtime} min</span>}
+          </div>
           <p className="overview">{movie.overview}</p>
           <div className="actions">
             <button className="btn-primary" style={{ width: 'auto', padding: '10px 20px' }} onClick={() => addToWatchlist('planned')}>+ Plan to Watch</button>
@@ -97,6 +103,20 @@ export default function MovieDetail() {
           {msg && <div style={{ marginTop: 12, color: '#f5c518' }}>{msg}</div>}
         </div>
       </div>
+
+      {movie.cast?.length > 0 && (
+        <>
+          <h2 className="section-title">Cast</h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
+            {movie.cast.map((c, i) => (
+              <div key={i} style={{ backgroundColor: '#1a1a1a', borderRadius: 8, padding: '10px 14px', minWidth: 120 }}>
+                <div style={{ color: '#fff', fontWeight: '600', fontSize: 14 }}>{c.name}</div>
+                <div style={{ color: '#666', fontSize: 12, marginTop: 2 }}>{c.character}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <h2 className="section-title">Write a Review</h2>
       <form className="review-form" onSubmit={submitReview}>

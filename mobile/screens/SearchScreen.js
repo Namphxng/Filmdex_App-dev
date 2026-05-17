@@ -45,7 +45,7 @@ export default function SearchScreen({ navigation }) {
       </View>
 
       {loading && (
-        <ActivityIndicator size="large" color="#E50914" style={{ marginTop: 48 }} />
+        <ActivityIndicator size="large" color="#f5c518" style={{ marginTop: 48 }} />
       )}
 
       {!loading && hasSearched && results.length === 0 && (
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     padding: 12, fontSize: 15, borderWidth: 1, borderColor: '#2a2a2a',
   },
   searchBtn: {
-    backgroundColor: '#E50914', borderRadius: 8,
+    backgroundColor: '#f5c518', borderRadius: 8,
     paddingHorizontal: 18, justifyContent: 'center',
   },
   searchBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },

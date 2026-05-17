@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   createUserWithEmailAndPassword,
@@ -15,11 +15,12 @@ export const AuthProvider = ({ children }) => {
   const [firebaseUser, setFirebaseUser] = useState(null);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isRegistering = useRef(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
-      if (fbUser) {
+      if (fbUser && !isRegistering.current) {
         try {
           const { data } = await authAPI.getProfile();
           setUser(data.user);
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           await AsyncStorage.removeItem('user');
         }
-      } else {
+      } else if (!fbUser) {
         setUser(null);
         await AsyncStorage.removeItem('user');
       }
@@ -46,8 +47,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (username, email, password, favoriteGenres = []) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    isRegistering.current = true;
     try {
+      await createUserWithEmailAndPassword(auth, email, password);
       const { data } = await authAPI.register({ username, favoriteGenres });
       setUser(data.user);
       await AsyncStorage.setItem('user', JSON.stringify(data.user));
@@ -55,6 +57,8 @@ export const AuthProvider = ({ children }) => {
     } catch (ex) {
       await signOut(auth);
       throw ex;
+    } finally {
+      isRegistering.current = false;
     }
   };
 

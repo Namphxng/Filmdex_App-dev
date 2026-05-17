@@ -56,7 +56,7 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.subGreeting}>What are you watching today?</Text>
       </View>
 
-      <Text style={styles.sectionTitle}>🔥 Trending This Week</Text>
+      <Text style={styles.sectionTitle}>Trending Now</Text>
       <FlatList
         data={trending.slice(0, 12)}
         horizontal
@@ -68,7 +68,7 @@ export default function HomeScreen({ navigation }) {
         )}
       />
 
-      <Text style={styles.sectionTitle}>🎯 Recommended For You</Text>
+      <Text style={styles.sectionTitle}>Recommended For You</Text>
       <FlatList
         data={recommended.slice(0, 12)}
         horizontal

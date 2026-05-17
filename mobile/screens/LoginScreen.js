@@ -74,17 +74,17 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   inner: { flex: 1, justifyContent: 'center', padding: 24 },
-  logo: { fontSize: 52, fontWeight: 'bold', color: '#E50914', textAlign: 'center', letterSpacing: 6 },
+  logo: { fontSize: 52, fontWeight: 'bold', color: '#f5c518', textAlign: 'center', letterSpacing: 6 },
   subtitle: { fontSize: 12, color: '#555', textAlign: 'center', letterSpacing: 3, marginBottom: 52 },
   input: {
     backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 8,
     padding: 16, marginBottom: 14, fontSize: 15, borderWidth: 1, borderColor: '#2a2a2a',
   },
   button: {
-    backgroundColor: '#E50914', borderRadius: 8, padding: 16,
+    backgroundColor: '#f5c518', borderRadius: 8, padding: 16,
     alignItems: 'center', marginTop: 6, marginBottom: 28,
   },
-  buttonText: { color: '#fff', fontSize: 15, fontWeight: 'bold', letterSpacing: 2 },
+  buttonText: { color: '#000', fontSize: 15, fontWeight: 'bold', letterSpacing: 2 },
   link: { color: '#666', textAlign: 'center', fontSize: 14 },
-  linkHighlight: { color: '#E50914', fontWeight: '600' },
+  linkHighlight: { color: '#f5c518', fontWeight: '600' },
 });

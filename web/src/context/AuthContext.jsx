@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -14,11 +14,12 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [firebaseUser, setFirebaseUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isRegistering = useRef(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
-      if (fbUser) {
+      if (fbUser && !isRegistering.current) {
         try {
           const { data } = await api.get('/auth/profile');
           setUser(data.user);
@@ -27,7 +28,7 @@ export function AuthProvider({ children }) {
           setUser(null);
           localStorage.removeItem('filmdex_user');
         }
-      } else {
+      } else if (!fbUser) {
         setUser(null);
         localStorage.removeItem('filmdex_user');
       }
@@ -44,14 +45,17 @@ export function AuthProvider({ children }) {
   }
 
   async function register(username, email, password, favoriteGenres = []) {
-    await createUserWithEmailAndPassword(auth, email, password);
+    isRegistering.current = true;
     try {
+      await createUserWithEmailAndPassword(auth, email, password);
       const { data } = await api.post('/auth/register', { username, favoriteGenres });
       setUser(data.user);
       localStorage.setItem('filmdex_user', JSON.stringify(data.user));
     } catch (ex) {
       await signOut(auth);
       throw ex;
+    } finally {
+      isRegistering.current = false;
     }
   }
 
@@ -61,8 +65,13 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('filmdex_user');
   }
 
+  function updateUser(updatedUser) {
+    setUser(updatedUser);
+    localStorage.setItem('filmdex_user', JSON.stringify(updatedUser));
+  }
+
   return (
-    <AuthContext.Provider value={{ user, firebaseUser, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, firebaseUser, loading, login, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -34,7 +34,7 @@ export default function Login() {
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
         <label>Password</label>
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button className="btn-primary" disabled={busy}>{busy ? 'Signing in...' : 'Sign In'}</button>
+        <button className="btn-primary" disabled={busy}>{busy ? 'Logging in...' : 'Login'}</button>
         <div className="auth-switch">
           New here? <Link to="/register">Create an account</Link>
         </div>

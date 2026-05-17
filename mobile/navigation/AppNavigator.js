@@ -25,7 +25,7 @@ const stackOptions = {
 function HomeStack() {
   return (
     <Stack.Navigator screenOptions={stackOptions}>
-      <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'FILMDEX', headerTitleStyle: { color: '#E50914', fontWeight: 'bold', fontSize: 20 } }} />
+      <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'FILMDEX', headerTitleStyle: { color: '#f5c518', fontWeight: 'bold', fontSize: 20 } }} />
       <Stack.Screen name="MovieDetail" component={MovieDetailScreen} options={{ title: '' }} />
     </Stack.Navigator>
   );
@@ -49,41 +49,53 @@ function WatchlistStack() {
   );
 }
 
+function JournalStack() {
+  return (
+    <Stack.Navigator screenOptions={stackOptions}>
+      <Stack.Screen name="Journal" component={JournalScreen} />
+    </Stack.Navigator>
+  );
+}
+
 function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarStyle: { backgroundColor: '#111', borderTopColor: '#222', paddingBottom: 4 },
-        tabBarActiveTintColor: '#E50914',
+        tabBarActiveTintColor: '#f5c518',
         tabBarInactiveTintColor: '#666',
-        tabBarLabelStyle: { fontSize: 11 },
+        tabBarLabelStyle: { fontSize: 13, marginBottom: 4, fontWeight: 'bold' },
+        tabBarShowIcon: false,
+        tabBarIcon: () => null,
+        tabBarIconStyle: { display: 'none', height: 0 },
+        tabBarItemStyle: { justifyContent: 'center' },
       }}
     >
       <Tab.Screen
         name="HomeTab"
         component={HomeStack}
-        options={{ tabBarLabel: 'Home', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }}
+        options={{ tabBarLabel: 'Home' }}
       />
       <Tab.Screen
         name="SearchTab"
         component={SearchStack}
-        options={{ tabBarLabel: 'Search', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🔍</Text> }}
+        options={{ tabBarLabel: 'Search' }}
       />
       <Tab.Screen
         name="WatchlistTab"
         component={WatchlistStack}
-        options={{ tabBarLabel: 'Watchlist', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>📋</Text> }}
+        options={{ tabBarLabel: 'Watchlist' }}
       />
       <Tab.Screen
-        name="Journal"
-        component={JournalScreen}
-        options={{ tabBarLabel: 'Journal', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>📔</Text>, headerShown: false }}
+        name="JournalTab"
+        component={JournalStack}
+        options={{ tabBarLabel: 'Journal' }}
       />
-<Tab.Screen
+      <Tab.Screen
         name="ProfileTab"
         component={ProfileScreen}
-        options={{ tabBarLabel: 'Profile', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text>, headerShown: false }}
+        options={{ tabBarLabel: 'Profile', headerShown: false }}
       />
     </Tab.Navigator>
   );
@@ -95,8 +107,8 @@ export default function AppNavigator() {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0a0a0a' }}>
-        <Text style={{ color: '#E50914', fontSize: 32, fontWeight: 'bold', letterSpacing: 4 }}>FILMDEX</Text>
-        <ActivityIndicator color="#E50914" style={{ marginTop: 20 }} />
+        <Text style={{ color: '#f5c518', fontSize: 32, fontWeight: 'bold', letterSpacing: 4 }}>FILMDEX</Text>
+        <ActivityIndicator color="#f5c518" style={{ marginTop: 20 }} />
       </View>
     );
   }

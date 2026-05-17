@@ -1,18 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
 export default function MovieCard({ item, onPress, style }) {
   const isTV = item.tmdbType === 'tv' || item.type === 'series';
+  const [imgError, setImgError] = useState(false);
 
   return (
     <TouchableOpacity style={[styles.card, style]} onPress={onPress} activeOpacity={0.8}>
-      <Image
-        source={{
-          uri: item.poster || `https://via.placeholder.com/130x190/1a1a1a/555?text=${encodeURIComponent(item.title || '?')}`,
-        }}
-        style={styles.poster}
-        resizeMode="cover"
-      />
+      {item.poster && !imgError ? (
+        <Image
+          source={{ uri: item.poster }}
+          style={styles.poster}
+          resizeMode="cover"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <View style={styles.posterFallback}>
+          <Text style={styles.posterFallbackText}>No Image</Text>
+        </View>
+      )}
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
         <View style={styles.metaRow}>
@@ -30,6 +36,11 @@ export default function MovieCard({ item, onPress, style }) {
 const styles = StyleSheet.create({
   card: { width: 130, backgroundColor: '#1a1a1a', borderRadius: 8, overflow: 'hidden' },
   poster: { width: '100%', height: 185, backgroundColor: '#2a2a2a' },
+  posterFallback: {
+    width: '100%', height: 185, backgroundColor: '#2a2a2a',
+    justifyContent: 'center', alignItems: 'center', padding: 8,
+  },
+  posterFallbackText: { color: '#555', fontSize: 12, textAlign: 'center' },
   info: { padding: 8 },
   title: { color: '#fff', fontSize: 12, fontWeight: '600', marginBottom: 4, lineHeight: 17 },
   metaRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },

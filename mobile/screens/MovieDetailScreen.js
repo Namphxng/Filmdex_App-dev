@@ -78,7 +78,7 @@ export default function MovieDetailScreen({ route }) {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#E50914" />
+        <ActivityIndicator size="large" color="#f5c518" />
       </View>
     );
   }
@@ -140,24 +140,20 @@ export default function MovieDetailScreen({ route }) {
         </View>
 
         <TouchableOpacity style={styles.reviewBtn} onPress={() => setShowReviewModal(true)}>
-          <Text style={styles.reviewBtnText}>✍️ Write a Review</Text>
+          <Text style={styles.reviewBtnText}>Write a Review</Text>
         </TouchableOpacity>
 
         {movie.cast?.length > 0 && (
           <>
             <Text style={styles.sectionTitle}>Cast</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.castRow}>
               {movie.cast.map((c, i) => (
                 <View key={i} style={styles.castCard}>
-                  <Image
-                    source={{ uri: c.photo || 'https://via.placeholder.com/60x60/1a1a1a/555?text=?' }}
-                    style={styles.castPhoto}
-                  />
                   <Text style={styles.castName} numberOfLines={2}>{c.name}</Text>
                   <Text style={styles.castChar} numberOfLines={1}>{c.character}</Text>
                 </View>
               ))}
-            </ScrollView>
+            </View>
           </>
         )}
 
@@ -233,19 +229,19 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#fff', marginTop: 24, marginBottom: 12 },
   statusRow: { flexDirection: 'row', gap: 6 },
   statusBtn: { flex: 1, paddingVertical: 9, borderRadius: 6, borderWidth: 1, borderColor: '#333', alignItems: 'center' },
-  statusBtnActive: { backgroundColor: '#E50914', borderColor: '#E50914' },
+  statusBtnActive: { backgroundColor: '#f5c518', borderColor: '#f5c518' },
   statusBtnText: { color: '#555', fontSize: 11, fontWeight: '500' },
-  statusBtnTextActive: { color: '#fff', fontWeight: '700' },
-  reviewBtn: { backgroundColor: '#E50914', borderRadius: 8, padding: 13, alignItems: 'center', marginTop: 12 },
-  reviewBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
-  castCard: { width: 72, marginRight: 12, alignItems: 'center' },
-  castPhoto: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#2a2a2a', marginBottom: 4 },
-  castName: { color: '#ccc', fontSize: 11, textAlign: 'center', fontWeight: '600' },
-  castChar: { color: '#666', fontSize: 10, textAlign: 'center' },
+  statusBtnTextActive: { color: '#000', fontWeight: '700' },
+  reviewBtn: { backgroundColor: '#f5c518', borderRadius: 8, padding: 13, alignItems: 'center', marginTop: 12 },
+  reviewBtnText: { color: '#000', fontWeight: 'bold', fontSize: 14 },
+  castRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 8 },
+  castCard: { backgroundColor: '#1a1a1a', borderRadius: 8, padding: 10, minWidth: 110 },
+  castName: { color: '#fff', fontSize: 13, fontWeight: '600' },
+  castChar: { color: '#666', fontSize: 11, marginTop: 2 },
   noContent: { color: '#555', fontSize: 14, marginBottom: 8 },
   reviewCard: { backgroundColor: '#1a1a1a', borderRadius: 8, padding: 12, marginBottom: 10 },
   reviewHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
-  reviewUser: { color: '#E50914', fontWeight: 'bold', fontSize: 14 },
+  reviewUser: { color: '#f5c518', fontWeight: 'bold', fontSize: 14 },
   reviewRating: { color: '#f9c84a', fontWeight: 'bold' },
   reviewText: { color: '#ccc', fontSize: 13, lineHeight: 20, marginBottom: 4 },
   reviewDate: { color: '#555', fontSize: 11 },

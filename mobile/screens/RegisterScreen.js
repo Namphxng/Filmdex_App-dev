@@ -108,14 +108,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
     borderWidth: 1, borderColor: '#333', backgroundColor: '#111',
   },
-  genreChipActive: { backgroundColor: '#E50914', borderColor: '#E50914' },
+  genreChipActive: { backgroundColor: '#f5c518', borderColor: '#f5c518' },
   genreText: { color: '#666', fontSize: 13 },
   genreTextActive: { color: '#fff', fontWeight: '600' },
   button: {
-    backgroundColor: '#E50914', borderRadius: 8, padding: 16,
+    backgroundColor: '#f5c518', borderRadius: 8, padding: 16,
     alignItems: 'center', marginBottom: 24,
   },
-  buttonText: { color: '#fff', fontSize: 15, fontWeight: 'bold', letterSpacing: 2 },
+  buttonText: { color: '#000', fontSize: 15, fontWeight: 'bold', letterSpacing: 2 },
   link: { color: '#666', textAlign: 'center', fontSize: 14 },
-  linkHighlight: { color: '#E50914', fontWeight: '600' },
+  linkHighlight: { color: '#f5c518', fontWeight: '600' },
 });

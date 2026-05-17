@@ -21,7 +21,7 @@ export default function WatchlistItem({ item, onPress, onRemove, onStatusChange 
           <Text style={[styles.status, { color: STATUS_COLORS[item.status] }]}>
             {STATUS_ICONS[item.status]} {item.status?.charAt(0).toUpperCase() + item.status?.slice(1)}
           </Text>
-          {item.watchedAt && (
+          {item.status === 'watched' && item.watchedAt && (
             <Text style={styles.watchedDate}>
               Watched {new Date(item.watchedAt).toLocaleDateString()}
             </Text>
@@ -65,9 +65,9 @@ const styles = StyleSheet.create({
     flex: 1, paddingVertical: 5, borderRadius: 4,
     borderWidth: 1, borderColor: '#2a2a2a', alignItems: 'center',
   },
-  statusBtnActive: { backgroundColor: '#E50914', borderColor: '#E50914' },
+  statusBtnActive: { backgroundColor: '#f5c518', borderColor: '#f5c518' },
   statusBtnText: { color: '#555', fontSize: 11, fontWeight: '500' },
-  statusBtnTextActive: { color: '#fff', fontWeight: '700' },
+  statusBtnTextActive: { color: '#000', fontWeight: '700' },
   removeBtn: { padding: 6 },
   removeText: { color: '#555', fontSize: 16 },
 });

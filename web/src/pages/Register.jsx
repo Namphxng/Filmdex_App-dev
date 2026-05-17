@@ -39,7 +39,7 @@ export default function Register() {
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
         <button className="btn-primary" disabled={busy}>{busy ? 'Creating...' : 'Create Account'}</button>
         <div className="auth-switch">
-          Already have an account? <Link to="/login">Sign in</Link>
+          Already have an account? <Link to="/login">Login</Link>
         </div>
       </form>
     </div>

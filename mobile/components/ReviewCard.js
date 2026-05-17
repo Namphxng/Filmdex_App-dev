@@ -40,10 +40,10 @@ export default function ReviewCard({ review, onDelete, showUser, showTitle }) {
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: '#1a1a1a', borderRadius: 10, padding: 14, borderLeftWidth: 3, borderLeftColor: '#E50914' },
+  card: { backgroundColor: '#1a1a1a', borderRadius: 10, padding: 14, borderLeftWidth: 3, borderLeftColor: '#f5c518' },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 },
   left: { flex: 1, marginRight: 10 },
-  username: { color: '#E50914', fontWeight: 'bold', fontSize: 14, marginBottom: 2 },
+  username: { color: '#f5c518', fontWeight: 'bold', fontSize: 14, marginBottom: 2 },
   title: { color: '#fff', fontWeight: '600', fontSize: 15, marginBottom: 2 },
   date: { color: '#555', fontSize: 12 },
   ratingBlock: { alignItems: 'flex-end' },

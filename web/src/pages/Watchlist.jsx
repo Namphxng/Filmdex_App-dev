@@ -74,6 +74,11 @@ export default function Watchlist() {
                 <img src={posterUrl} alt={item.title} onClick={() => navigate(`/movie/${item.tmdbType}/${item.tmdbId}`)} />
                 <div className="info">
                   <div className="title">{item.title}</div>
+                  {tab === 'watched' && item.watchedAt && (
+                    <div style={{ color: '#666', fontSize: 11, marginTop: 4 }}>
+                      Watched {new Date(item.watchedAt).toLocaleDateString()}
+                    </div>
+                  )}
                   <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
                     <select
                       value={item.status}

@@ -8,7 +8,6 @@ import { watchlistAPI } from '../services/api';
 import WatchlistItem from '../components/WatchlistItem';
 
 const TABS = [
-  { key: 'all', label: 'All' },
   { key: 'planned', label: 'Planned' },
   { key: 'watching', label: 'Watching' },
   { key: 'watched', label: 'Watched' },
@@ -16,7 +15,7 @@ const TABS = [
 
 export default function WatchlistScreen({ navigation }) {
   const [items, setItems] = useState([]);
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState('planned');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -29,7 +28,7 @@ export default function WatchlistScreen({ navigation }) {
 
   const fetchWatchlist = async () => {
     try {
-      const status = activeTab === 'all' ? undefined : activeTab;
+      const status = activeTab;
       const res = await watchlistAPI.get(status);
       setItems(res.data.data || []);
     } catch (error) {
@@ -52,11 +51,7 @@ export default function WatchlistScreen({ navigation }) {
   const handleStatusChange = async (id, status) => {
     try {
       await watchlistAPI.update(id, status);
-      if (activeTab !== 'all') {
-        setItems(prev => prev.filter(i => i._id !== id));
-      } else {
-        setItems(prev => prev.map(i => i._id === id ? { ...i, status } : i));
-      }
+      setItems(prev => prev.filter(i => i._id !== id));
     } catch (error) {
       console.error('Status error:', error.message);
     }
@@ -79,7 +74,7 @@ export default function WatchlistScreen({ navigation }) {
       </View>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#E50914" style={{ marginTop: 48 }} />
+        <ActivityIndicator size="large" color="#f5c518" style={{ marginTop: 48 }} />
       ) : (
         <FlatList
           data={items}
@@ -89,12 +84,12 @@ export default function WatchlistScreen({ navigation }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => { setRefreshing(true); fetchWatchlist(); }}
-              tintColor="#E50914"
+              tintColor="#f5c518"
             />
           }
           ListEmptyComponent={
             <Text style={styles.empty}>
-              {activeTab === 'all' ? 'Your watchlist is empty.' : `No ${activeTab} items.`}
+              {`No ${activeTab} items.`}
             </Text>
           }
           renderItem={({ item }) => (
@@ -115,7 +110,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a0a' },
   tabs: { flexDirection: 'row', backgroundColor: '#111', borderBottomWidth: 1, borderBottomColor: '#1a1a1a' },
   tab: { flex: 1, paddingVertical: 12, alignItems: 'center' },
-  tabActive: { borderBottomWidth: 2, borderBottomColor: '#E50914' },
+  tabActive: { borderBottomWidth: 2, borderBottomColor: '#f5c518' },
   tabText: { color: '#555', fontSize: 13, fontWeight: '500' },
   tabTextActive: { color: '#fff', fontWeight: '700' },
   list: { padding: 16, gap: 10 },
